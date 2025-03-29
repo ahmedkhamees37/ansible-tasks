@@ -1,0 +1,50 @@
+- name: Setup Bastion Host and Deploy SSH Keys
+  hosts: bastion
+  become: yes
+  tasks:
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install required packages (Red Hat)
+      ansible.builtin.yum:
+        name: openssh-server
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Generate SSH key pair on Bastion Host
+      ansible.builtin.command:
+        cmd: ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
+        creates: /root/.ssh/id_rsa
+
+    - name: Encrypt private key using Ansible Vault
+      ansible.builtin.command:
+        cmd: ansible-vault encrypt /root/.ssh/id_rsa --vault-password-file ~/vault_pass
+      ignore_errors: yes
+
+    - name: Fetch public key from Bastion Host
+      ansible.builtin.fetch:
+        src: /root/.ssh/id_rsa.pub
+        dest: ./id_rsa.pub
+        flat: yes
+
+- name: Deploy Public Key to Red Hat Servers
+  hosts: redhat_servers
+  become: yes
+  tasks:
+
+    - name: Ensure .ssh directory exists
+      ansible.builtin.file:
+        path: /root/.ssh
+        state: directory
+        mode: '0700'
+
+    - name: Copy public key to Red Hat servers
+      ansible.builtin.copy:
+        src: ./id_rsa.pub
+        dest: /root/.ssh/authorized_keys
+        mode: '0600'
+

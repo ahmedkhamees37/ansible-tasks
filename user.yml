@@ -1,0 +1,21 @@
+---
+- name: Manage user and web server
+  hosts: all
+  become: yes  # Run tasks as root
+  tasks:
+    - name: Remove user 'saeed'
+      user:
+        name: saeed
+        state: absent
+
+    - name: Install web server (httpd)
+      yum:
+        name: httpd
+        state: present  # Ensures httpd is installed
+
+    - name: Start and enable httpd service
+      service:
+        name: httpd
+        enabled: yes
+        state: started
+

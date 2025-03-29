@@ -1,0 +1,8 @@
+---
+- name: Ansible debug module example
+  hosts: servers
+  remote_user: ansible
+  tasks:
+    - name: Print dummy message
+      debug:
+        msg: Hello world

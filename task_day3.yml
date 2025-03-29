@@ -1,0 +1,43 @@
+- name: Playbook to install and configure httpd
+  hosts: all
+  become: true
+  tasks:
+
+  - name: Show facts available on the system
+    ansible.builtin.debug:
+      var: ansible_facts["distribution"]
+
+  - name: Install httpd on Ubuntu
+    when: ansible_facts["distribution"] == "Ubuntu"
+    ansible.builtin.apt:
+      name: apache2
+      state: present
+
+  - name: Install httpd on Centos
+    when: ansible_facts["distribution"] == "Centos"
+    ansible.builtin.yum:
+      name: httpd
+      state: present
+
+  - name: Change port from 80 to  90 (Ubuntu)
+    when: ansible_facts["distribution"] == "Ubuntu"
+    ansible.builtin.lineinfile:
+      path: /etc/apache2/ports.conf
+      regexp: '^Listen '
+      line: 'Listen 90'
+    notify: Restart apache
+
+  - name: Change port from 80 to  90 (Centos)
+    when: ansible_facts["distribution"] == "Centos"
+    ansible.builtin.lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^Listen '
+      line: 'Listen 90'
+    notify: Restart apache
+
+  handlers:
+  - name: Restart apache
+    ansible.builtin.service:
+      name: http
+      state: restarted
+

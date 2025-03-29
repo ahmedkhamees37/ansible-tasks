@@ -1,0 +1,11 @@
+- name: Ensure that Private key exist
+    when: ansible_facts["distribution"] == "Ubuntu"
+    ansible.builtin.copy:
+     content: '{{ private_key }}'
+     destination: /home/ubuntu/.ssh/id_rsa
+ 
+    - name: Ensure that Private key exist
+    when: ansible_facts["distribution"] == "RedHat"
+    ansible.builtin.copy:
+     src: ./ansible_key.pub
+     destination:
