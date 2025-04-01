@@ -6,10 +6,10 @@
     - name: Update /etc/motd
       copy:
         content: |
-          ************************************
-          *   Welcome to {{ ansible_hostname }} from Ahmed Khamis   *
-          *   Managed by Ansible!               *
-          ************************************
+          **********************************************************
+          *   Welcome to {{ ansible_hostname }} from Ahmed Khamis                 *
+          *   Managed by Ansible!                                   *
+          ***********************************************************
         dest: /etc/motd
         owner: root
         group: root

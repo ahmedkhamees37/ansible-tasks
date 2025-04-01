@@ -24,7 +24,7 @@
     ansible.builtin.lineinfile:
       path: /etc/apache2/ports.conf
       regexp: '^Listen '
-      line: 'Listen 90'
+      line: 'Listen 80'
     notify: Restart apache
 
   - name: Change port from 80 to  90 (Centos)
@@ -32,7 +32,7 @@
     ansible.builtin.lineinfile:
       path: /etc/httpd/conf/httpd.conf
       regexp: '^Listen '
-      line: 'Listen 90'
+      line: 'Listen 80'
     notify: Restart apache
 
   handlers:
